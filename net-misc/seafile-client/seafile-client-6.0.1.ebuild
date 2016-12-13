@@ -12,7 +12,7 @@ SRC_URI="https://github.com/haiwen/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.ta
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~x86"
+KEYWORDS="~x86 ~amd64"
 
 DEPEND=">=net-misc/seafile-${PV}[client] dev-libs/jansson >=dev-qt/qtcore-5.5.1"
 
