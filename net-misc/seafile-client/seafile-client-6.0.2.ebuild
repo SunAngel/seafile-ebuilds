@@ -1,10 +1,11 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# Created by Martin Kupec
+# by Martin Kupec
+# Updated by Vladimir Goshev
 
-EAPI=4
+EAPI=6
 
-inherit eutils python autotools
+inherit eutils
 
 DESCRIPTION="Cloud file syncing software"
 HOMEPAGE="http://www.seafile.com"
@@ -13,17 +14,25 @@ SRC_URI="https://github.com/haiwen/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.ta
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
+#IUSE=""
 
-DEPEND=">=net-misc/seafile-${PV}[client] dev-libs/jansson >=dev-qt/qtcore-5.5.1"
 
-RDEPEND=""
+RDEPEND="
+	>=net-misc/seafile-${PV}[client] 
+	dev-libs/jansson
+	dev-db/sqlite:3
+	>=dev-qt/qtcore-5.5.1
+	"
 
-pkg_setup() {
-	python_set_active_version 2
-	python_pkg_setup
+DEPEND="
+	${RDEPEND}
+	dev-util/cmake
+	"
+
+src_configure() {
+	cmake . || die "src_compile failed"
 }
 
 src_compile() {
-	cmake . || die "src_compile failed"
-	emake -j1 || die "emake failed"
+	emake || die "emake failed"
 }
