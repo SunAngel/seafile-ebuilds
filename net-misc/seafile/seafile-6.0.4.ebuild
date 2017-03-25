@@ -1,6 +1,7 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Created by Martin Kupec
+# Updated by Vladimir Goshev
 
 EAPI=5
 
@@ -9,41 +10,40 @@ PYTHON_REQ_USE="sqlite(+)"
 
 inherit autotools-utils python-single-r1
 
-DESCRIPTION="Networking library for Seafile"
+DESCRIPTION="Cloud file syncing software"
 HOMEPAGE="http://www.seafile.com"
 SRC_URI="https://github.com/haiwen/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 
-SLOT="0"
 LICENSE="GPL-2"
+SLOT="0"
 KEYWORDS="~x86 ~amd64"
-IUSE="+client +server ldap demo"
+IUSE="server +client fuse"
 
-RDEPEND=">=net-libs/libsearpc-3.1.0
-	>=dev-libs/glib-2.16
-	>=dev-lang/vala-0.8
-	>=dev-db/libzdb-2.10
-	virtual/pkgconfig
+RDEPEND="
 	${PYTHON_DEPS}
+	>=net-libs/ccnet-${PV}
+	>=net-libs/libevhtp-1.2.10-r1
+	virtual/pkgconfig
+	dev-libs/jansson
 	>=dev-libs/libevent-2
-	ldap? ( net-nds/openldap )"
+	fuse? ( >=sys-fs/fuse-2.7.3 )
+	client? ( >=net-libs/ccnet-${PV}[client] )
+	server? ( >=net-libs/ccnet-${PV}[server] )"
 DEPEND="${RDEPEND}"
 
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+	fuse? ( server )"
 
 AUTOTOOLS_IN_SOURCE_BUILD=1
 AUTOTOOLS_AUTORECONF=1
 
-PATCHES=(
-	"${FILESDIR}"/libccnet.pc.patch
-	"${FILESDIR}"/0001-Add-autoconfiguration-for-libjansson.patch
-)
-
 src_configure() {
 	local myeconfargs=(
-		$(use_enable server)
-		$(use_enable client)
-		$(use_enable ldap)
-		$(use_enable demo compile-demo)
+		$(use_enable fuse) \
+		$(use_enable client) \
+		$(use_enable server) \
+		--enable-console
 	)
 	autotools-utils_src_configure
 }
@@ -55,4 +55,15 @@ src_compile() {
 	export PATH="${S}/tmpbin/:$PATH"
 
 	autotools-utils_src_compile
+}
+
+src_install() {
+	autotools-utils_src_install
+
+	insinto /usr/share/seafile
+	doins -r ${S}/scripts
+	dodoc ${S}/doc/cli-readme.txt
+	doman ${S}/doc/*.1
+
+	python_fix_shebang "${ED}"
 }
