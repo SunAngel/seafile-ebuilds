@@ -6,10 +6,12 @@ EAPI=5
 
 inherit eutils cmake-utils
 
+RELEASE_COMMIT_HASH="18c649203f009ef1d77d6f8301eba09af3777adf"
+
 DESCRIPTION="Flexible replacement for libevent's httpd API"
 HOMEPAGE="https://github.com/haiwen/libevhtp/"
 #SRC_URI="https://github.com/ellzey/libevhtp/archive/${PV}.zip -> ${PN}-${PV}.zip"
-SRC_URI="https://github.com/haiwen/libevhtp/archive/18c649203f009ef1d77d6f8301eba09af3777adf.zip -> ${PN}-${PV}.zip"
+SRC_URI="https://github.com/haiwen/${PN}/archive/${RELEASE_COMMIT_HASH}.tar.gz -> ${PN}-${RELEASE_COMMIT_HASH}.tar.gz"
 
 SLOT="0"
 LICENSE="GPL-2"
@@ -18,6 +20,8 @@ IUSE=""
 
 DEPEND=">=dev-libs/libevent-2"
 RDEPEND="dev-libs/oniguruma"
+
+S="${WORKDIR}/${PN}-${RELEASE_COMMIT_HASH}"
 
 src_configure() {
 	local mycmakeargs=(
@@ -37,3 +41,6 @@ src_install() {
 		rm ${D}/usr/include/onigposix.h
 	fi
 }
+
+
+
