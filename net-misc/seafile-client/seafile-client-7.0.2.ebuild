@@ -18,7 +18,7 @@ KEYWORDS="~x86 ~amd64"
 
 
 RDEPEND="
-	>=net-misc/seafile-${PV}[client] 
+	>=net-misc/seafile-${PV}
 	dev-libs/jansson
 	dev-db/sqlite:3
 	>=dev-qt/qtcore-5.5.1
